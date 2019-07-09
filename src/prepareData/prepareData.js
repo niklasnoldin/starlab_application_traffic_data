@@ -9,7 +9,7 @@ const getStreetData = () => {
       .on("data", data => {
         if (!streets.has(data.Tram)) streets.set(data.Tram, []);
         let currStreet = streets.get(data.Tram);
-        currStreet.push([data.Longitud, data.Latitud]);
+        currStreet.push([parseFloat(data.Longitud), parseFloat(data.Latitud)]);
       })
       .on("end", () => {
         resolve(streets);
