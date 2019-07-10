@@ -11,7 +11,14 @@ export function InputField({ day, setDay, timestamp, setTimestamp }) {
             value={`2019-05-${`${day}`.padStart(2, "0")}`}
             min="2019-05-01"
             max="2019-05-31"
-            onChange={e => setDay(parseInt(e.target.value.substring(8)))}
+            onChange={e => {
+              setDay(parseInt(e.target.value.substring(8)));
+              setTimestamp(
+                `${timestamp.substring(0, 6)}${`${e.target.value.substring(
+                  8
+                )}`.padStart(2, "0")}${timestamp.substring(8)}`
+              );
+            }}
           />
         </label>
         <label>
@@ -29,7 +36,7 @@ export function InputField({ day, setDay, timestamp, setTimestamp }) {
                 `201905${`${day}`.padStart(2, "0")}${e.target.value.substring(
                   0,
                   2
-                )}${e.target.value.substring(2, 4)}`
+                )}${e.target.value.substring(3)}`
               )
             }
           />

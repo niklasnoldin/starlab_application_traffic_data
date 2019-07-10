@@ -15,10 +15,9 @@ const initializeMap = (day, timestamp) => {
   });
 
   let baseUrl =
-    "https://raw.githubusercontent.com/niklasnoldin/niklasnoldin.github.io/master/output/";
+    "https://raw.githubusercontent.com/niklasnoldin/niklasnoldin.github.io/master/output";
 
   map.on("load", () => {
-    let timestamp = 20190501000552;
     map.addSource("streets", {
       type: "geojson",
       data: `${baseUrl}/${day}/${timestamp}.json`
@@ -39,6 +38,7 @@ const initializeMap = (day, timestamp) => {
 
       var coordinates = e.features[0].geometry.coordinates.slice();
       var traffic = e.features[0].properties.trafficIntensity;
+      var streetName = e.features[0].properties.name;
 
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
@@ -46,22 +46,25 @@ const initializeMap = (day, timestamp) => {
 
       popup
         .setLngLat(e.lngLat)
-        .setHTML(`Traffic: ${traffic}`)
+        .setHTML(`${streetName}:<br>${traffic}`)
         .addTo(map);
     };
 
     for (let i = 0; i < 7; i++) {
-      map.addLayer({
-        id: `traffic-${i}`,
-        type: "line",
-        source: "streets",
-        paint: {
-          "line-color": `rgb(${Math.pow(255, 1 / (7 - i))},${128 +
-            128 / (i + 1)},${0})`,
-          "line-width": 4
+      map.addLayer(
+        {
+          id: `traffic-${i}`,
+          type: "line",
+          source: "streets",
+          paint: {
+            "line-color": `rgb(${Math.pow(255, 1 / (7 - i))},${128 +
+              128 / (i + 1)},${0})`,
+            "line-width": 4
+          },
+          filter: ["==", "trafficIntensity", `${i}`]
         },
-        filter: ["==", "trafficIntensity", `${i}`]
-      });
+        "road-label"
+      );
       map.on("mouseenter", `traffic-${i}`, onMouseEnterHandler);
       map.on("mouseleave", `traffic-${i}`, onMouseLeaveHandler);
     }
@@ -70,7 +73,7 @@ const initializeMap = (day, timestamp) => {
 
 function App() {
   const [day, setDay] = useState(1);
-  const [timestamp, setTimestamp] = useState("20190501000053");
+  const [timestamp, setTimestamp] = useState("201905010000");
 
   useEffect(() => {
     initializeMap(day, timestamp);
