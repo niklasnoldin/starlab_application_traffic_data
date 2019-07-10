@@ -1,10 +1,11 @@
+import { Legend } from "./legend";
 import { InputField } from "./InputField";
 import React, { useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "./App.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const initializeMap = (day, timestamp) => {
+const initializeMap = (day, timestamp, dashed) => {
   mapboxgl.accessToken =
     "pk.eyJ1IjoibmlrbGFzbm9sZGluIiwiYSI6ImNqaGh0NWxzZDF4cGczNnFvbnd0ZHJjbHEifQ.9yoH6H8i310Snle05XVYGA";
   const map = new mapboxgl.Map({
@@ -46,20 +47,31 @@ const initializeMap = (day, timestamp) => {
 
       popup
         .setLngLat(e.lngLat)
-        .setHTML(`${streetName}:<br>${traffic}`)
+        .setHTML(`${streetName}<br>Traffic: ${traffic}`)
         .addTo(map);
     };
 
     for (let i = 0; i < 7; i++) {
+      let paint = dashed
+        ? {
+            "line-color": `rgb(${64 + 192 * (i / 6)},${64 + 192 / (i + 1)},0)`,
+            "line-width": 4,
+            "line-dasharray": [i, 6 - i]
+          }
+        : {
+            "line-color": `rgb(${64 + 192 * (i / 6)},${64 + 192 / (i + 1)},0)`,
+            "line-width": 4
+          };
+
       map.addLayer(
         {
           id: `traffic-${i}`,
           type: "line",
           source: "streets",
-          paint: {
-            "line-color": `rgb(${Math.pow(255, 1 / (7 - i))},${128 +
-              128 / (i + 1)},${0})`,
-            "line-width": 4
+          paint: paint,
+          layout: {
+            "line-join": "round",
+            "line-cap": "round"
           },
           filter: ["==", "trafficIntensity", `${i}`]
         },
@@ -75,19 +87,24 @@ function App() {
   const [day, setDay] = useState(1);
   const [timestamp, setTimestamp] = useState("201905010000");
 
+  const [dashed, setDashed] = useState(false);
+
   useEffect(() => {
-    initializeMap(day, timestamp);
-  }, [day, timestamp]);
+    initializeMap(day, timestamp, dashed);
+  }, [day, timestamp, dashed]);
 
   return (
     <div className="App">
       <InputField
+        dashed={dashed}
+        setDashed={setDashed}
         day={day}
         setDay={setDay}
         timestamp={timestamp}
         setTimestamp={setTimestamp}
       />
       <div id="map" />
+      <Legend />
     </div>
   );
 }

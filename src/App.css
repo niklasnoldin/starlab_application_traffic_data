@@ -17,11 +17,29 @@
   padding: 1em;
   border-radius: 3px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-field label {
+  display: inline-block;
+}
+
+
+.input-field form {
+  display: flex;
+  flex-wrap: wrap;
+
+}
+
+.input-field form>* {
+  display: inline-block;
 }
 
 input {
   font-family: inherit;
-  margin: 0 1em;
+  margin: 0.25em 1em;
   border-radius: 3px;
   border: none;
   background: #efefef;
@@ -36,3 +54,68 @@ input {
   color: red;
   padding: 0 0.3em;
 }
+
+.legend {
+  position: absolute;
+  bottom: 1em;
+  left: 1em;
+  background: white;
+  border-radius: 3px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+  padding: 0.25em;
+  z-index: 10;
+}
+
+p {
+  margin: 0;
+}
+
+.legend>div {
+  display: flex;
+  margin-top: 0.5em;
+}
+
+.legend>div>div {
+  width: 1.5em;
+  text-align: center
+}
+
+.legend div *[class^="traffic-"]:before {
+  content: "";
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+
+.traffic-0::before {
+  background-color: rgb(64, 256, 0)
+}
+
+.traffic-1::before {
+  background-color: rgb(96, 160, 0)
+}
+
+.traffic-2::before {
+  background-color: rgb(128, 128, 0)
+}
+
+.traffic-3::before {
+  background-color: rgb(160, 112, 0)
+}
+
+.traffic-4::before {
+  background-color: rgb(192, 102, 0)
+}
+
+.traffic-5::before {
+  background-color: rgb(224, 96, 0)
+}
+
+.traffic-6::before {
+  background-color: rgb(256, 91, 0)
+}
+
+/* ${Math.pow(255, 1 / (7 - i))} */
+
+/* `rgb(${Math.pow(255, 1 / (7 - i))},${128 +128 / (i + 1)},${0})` */

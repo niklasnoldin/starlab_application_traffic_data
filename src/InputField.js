@@ -1,5 +1,12 @@
 import React from "react";
-export function InputField({ day, setDay, timestamp, setTimestamp }) {
+export function InputField({
+  dashed,
+  setDashed,
+  day,
+  setDay,
+  timestamp,
+  setTimestamp
+}) {
   return (
     <div className="input-field">
       <form action="">
@@ -42,6 +49,15 @@ export function InputField({ day, setDay, timestamp, setTimestamp }) {
           />
         </label>
       </form>
+      <label>
+        dashed lines
+        <input
+          type="checkbox"
+          name="dashed"
+          checked={dashed}
+          onChange={e => setDashed(!dashed)}
+        />
+      </label>
     </div>
   );
 }
