@@ -1,9 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-src/prepareData/2019_05_Maig_TRAMS_TRAMS.csv
-src/prepareData/transit_relacio_trams_format_long.csv
+prepareData/2019_05_Maig_TRAMS_TRAMS.csv
+prepareData/transit_relacio_trams_format_long.csv
 .ENV
 
-src/prepareData/output
+prepareData/output
 # dependencies
 /node_modules
 /.pnp
