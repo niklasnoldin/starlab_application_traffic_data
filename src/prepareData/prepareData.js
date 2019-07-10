@@ -26,7 +26,7 @@ const getTrafficData = () => {
         .on("data", data => {
           traffic.push({
             id: data.idTram,
-            day: parseInt(data.data.substring(4, 6)) - 1,
+            day: parseInt(data.data.substring(6, 8)) - 1,
             timestamp: data.data,
             traffic: data.estatActual
           });
@@ -41,23 +41,26 @@ const getTrafficData = () => {
 };
 
 const orderData = (streetData, trafficData) => {
-  let dataPerDay = Array(30).fill(new Map());
+  let dataPerDay = Array(30);
   trafficData.forEach(data => {
     let coordinates = streetData.get(data.id);
-    let singleDay = dataPerDay[data.day];
-    if (!singleDay.has(data.timestamp)) singleDay.set(data.timestamp, []);
-    let timestampArray = singleDay.get(data.timestamp);
-    timestampArray.push({
-      streetId: data.id,
-      traffic: data.traffic,
-      coordinates: coordinates
-    });
+    if (coordinates) {
+      if (!dataPerDay[data.day]) dataPerDay[data.day] = new Map();
+      let singleDay = dataPerDay[data.day];
+      if (!singleDay.has(data.timestamp)) singleDay.set(data.timestamp, []);
+      let timestampArray = singleDay.get(data.timestamp);
+      timestampArray.push({
+        streetId: data.id,
+        traffic: data.traffic,
+        coordinates: coordinates
+      });
+    } else {}
   });
   return dataPerDay;
 };
 
 const generateGeoJsonFromData = dataPerDay => {
-  dataPerDay.forEach(singleDay => {
+  dataPerDay.forEach((singleDay, idx) => {
     singleDay.forEach((timestampArray, timestamp) => {
       let geoJson = {
         type: "FeatureCollection",
@@ -76,26 +79,34 @@ const generateGeoJsonFromData = dataPerDay => {
         };
         geoJson.features.push(geoJsonData);
       });
-      fs.writeFile(
-        `./outputJsonFiles/${timestamp}.json`,
-        JSON.stringify(geoJson),
-        err => {
-          if (err) throw err;
-          else console.log(`File saved successfully: ${timestamp}.json`);
-        }
-      );
+
+      let basePath = `output/${idx + 1}`;
+      let filename = `${timestamp}.json`;
+
+      if (!fs.existsSync("output")) fs.mkdirSync("output");
+
+      if (!fs.existsSync(basePath)) fs.mkdirSync(basePath);
+
+      fs.writeFile(`${basePath}/${filename}`, JSON.stringify(geoJson), err => {
+        if (err) throw err;
+        else console.log(`File saved successfully: ${timestamp}.json`);
+      });
     });
   });
 };
 
 const main = async () => {
   try {
+    console.log("reading data");
     const [streetData, trafficData] = await Promise.all([
       getStreetData(),
       getTrafficData()
     ]);
+    console.log("finished reading data");
     let dataPerDay = orderData(streetData, trafficData);
+    console.log("ordered data");
     generateGeoJsonFromData(dataPerDay);
+    console.log("finished");
   } catch (e) {
     console.log("An error occured");
     console.log(e);
