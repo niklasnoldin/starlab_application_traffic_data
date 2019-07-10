@@ -7,9 +7,16 @@ const getStreetData = () => {
     fs.createReadStream("transit_relacio_trams_format_long.csv")
       .pipe(csv())
       .on("data", data => {
-        if (!streets.has(data.Tram)) streets.set(data.Tram, []);
+        if (!streets.has(data.Tram))
+          streets.set(data.Tram, {
+            name: data["Descripció"],
+            coordinates: []
+          });
         let currStreet = streets.get(data.Tram);
-        currStreet.push([parseFloat(data.Longitud), parseFloat(data.Latitud)]);
+        currStreet.coordinates.push([
+          parseFloat(data.Longitud),
+          parseFloat(data.Latitud)
+        ]);
       })
       .on("end", () => {
         resolve(streets);
@@ -43,8 +50,8 @@ const getTrafficData = () => {
 const orderData = (streetData, trafficData) => {
   let dataPerDay = Array(30);
   trafficData.forEach(data => {
-    let coordinates = streetData.get(data.id);
-    if (coordinates) {
+    let street = streetData.get(data.id);
+    if (street) {
       if (!dataPerDay[data.day]) dataPerDay[data.day] = new Map();
       let singleDay = dataPerDay[data.day];
       if (!singleDay.has(data.timestamp)) singleDay.set(data.timestamp, []);
@@ -52,9 +59,12 @@ const orderData = (streetData, trafficData) => {
       timestampArray.push({
         streetId: data.id,
         traffic: data.traffic,
-        coordinates: coordinates
+        coordinates: street.coordinates,
+        name: street.name
       });
-    } else {}
+    } else {
+      //console.error("Street with id not found:" + data.id);
+    }
   });
   return dataPerDay;
 };
@@ -70,7 +80,8 @@ const generateGeoJsonFromData = dataPerDay => {
         let geoJsonData = {
           type: "Feature",
           properties: {
-            trafficIntensity: street.traffic
+            trafficIntensity: street.traffic,
+            name: street.name
           },
           geometry: {
             type: "LineString",
