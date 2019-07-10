@@ -7,6 +7,20 @@
   height: 100vh;
 }
 
+.github a {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  background: white;
+  z-index: 10;
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+  padding: 1em;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+
+}
+
 .input-field {
   position: absolute;
   top: 1em;

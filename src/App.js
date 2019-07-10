@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "./App.css";
 import "mapbox-gl/dist/mapbox-gl.css";
+import github from "./github.svg";
 
 const initializeMap = (day, timestamp, dashed) => {
   mapboxgl.accessToken =
@@ -105,6 +106,15 @@ function App() {
       />
       <div id="map" />
       <Legend />
+      <div className="github">
+        <a
+          href="https://github.com/niklasnoldin/starlab_application_traffic_data"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img src={github} alt="Github Repository" />
+        </a>
+      </div>
     </div>
   );
 }
