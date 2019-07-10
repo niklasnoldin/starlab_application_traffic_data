@@ -34,7 +34,7 @@ const getTrafficData = () => {
           traffic.push({
             id: data.idTram,
             day: parseInt(data.data.substring(6, 8)) - 1,
-            timestamp: data.data,
+            timestamp: data.data.slice(0, -2),
             traffic: data.estatActual
           });
         })
